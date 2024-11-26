@@ -1,0 +1,12 @@
+---
+applications:
+- name: sbf-test
+  memory: 256MB
+  disk_quota: 1024MB
+  buildpack: python_buildpack
+  env:
+    BP_DEBUG: true
+  sidecars:
+  - name: sidecar
+    process_types: [web]
+    command: ./sidecar.sh

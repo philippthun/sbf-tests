@@ -1,0 +1,3 @@
+Flask
+gunicorn
+sbf-tests @ git+https://github.com/philippthun/sbf-tests.git@staging
