@@ -114,3 +114,64 @@ Exception: /etc/cf-service-bindings/upsi/provider: user-provided
 /etc/cf-service-bindings/upsi/password: pa55woRD
 [...]
 ```
+
+### Docker app
+
+A Docker image has been build from this repository and pushed to Docker Hub:
+
+```
+docker build --platform linux/amd64 -t philippthun693/sbf-tests .
+
+docker push philippthun693/sbf-tests
+```
+
+#### Preparation
+
+Create a test app, enable file-based service bindings, bind the user-provided service and push the app.
+```
+cf create-app sbf-test-dk --app-type docker
+
+cf curl -X PATCH "/v3/apps/$(cf app sbf-test-dk --guid)/features/file-based-service-bindings" -d '{ "enabled": true }'
+
+cf bind-service sbf-test-dk upsi
+
+cf push sbf-test-dk -f manifest-docker.yml
+```
+
+#### Check env var and files in container via ssh
+
+```
+cf ssh sbf-test-dk -c 'find $SERVICE_BINDING_ROOT -type f -exec bash -c "echo {}: \$(cat {})" \;'
+
+[... same output as above ...]
+```
+
+#### Check env var and files in app process via curl
+
+```
+curl $(cf curl "/v3/apps/$(cf app sbf-test-dk --guid)/routes" | jq -r ".resources[].url")?plain=true
+
+[... same output as above ...]
+```
+
+#### Check env var and files in sidecar via recent logs
+
+```
+cf logs sbf-test-dk --recent | grep -o '\[.*/SIDECAR/.*'
+
+[... same output as above ...]
+```
+
+#### Check env var and files in task via recent logs
+
+```
+cf run-task sbf-test-dk --command "./task.sh" --name task
+
+cf logs sbf-test-dk --recent | grep -o '\[.*/TASK/.*'
+
+[... same output as above ...]
+```
+
+#### Check env var and files during staging
+
+For Docker apps there is no staging process involving user-provided code.

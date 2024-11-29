@@ -1,0 +1,11 @@
+---
+applications:
+- name: sbf-test
+  memory: 256MB
+  disk_quota: 1024MB
+  docker:
+    image: philippthun693/sbf-tests
+  sidecars:
+  - name: sidecar
+    process_types: [web]
+    command: ./sidecar.sh
