@@ -1,0 +1,14 @@
+---
+applications:
+- name: sbf-test
+  memory: 256MB
+  disk_quota: 1024MB
+  lifecycle: cnb
+  buildpacks:
+    - docker://gcr.io/paketo-buildpacks/python
+  env:
+    BP_DEBUG: true
+#  sidecars:
+#  - name: sidecar
+#    process_types: [web]
+#    command: ./sidecar.sh
